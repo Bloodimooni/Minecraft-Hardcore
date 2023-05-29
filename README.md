@@ -13,12 +13,17 @@ https://www.python.org/downloads/
 3. make a run script:
 
 For Windows 'run.bat':
+
 ```java -Xmx2048M -Xms1024M -jar server.jar nogui```
+
 save the file as .bat and you are good to go.
 
 For Linux 'run.sh':
+
 ```java -Xmx2048M -Xms1024M -jar server.jar nogui```
-you still need to make it executable in linux. Simply type "sudo chmod +x run.sh" in the terminal.
+
+you still need to make it executable in linux. 
+Simply type "sudo chmod +x run.sh" in the terminal.
 
 
 # Once you are setup
