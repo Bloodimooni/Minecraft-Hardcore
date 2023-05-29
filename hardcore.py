@@ -2,9 +2,30 @@ import subprocess
 import time
 import os
 import sys
+import platform
 
+def print_banner():
+    banner = """
+██████╗ ██╗      ██████╗  ██████╗ ██████╗ ██╗███╗   ███╗ ██████╗  ██████╗ ███╗   ██╗██╗
+██╔══██╗██║     ██╔═══██╗██╔═══██╗██╔══██╗██║████╗ ████║██╔═══██╗██╔═══██╗████╗  ██║██║
+██████╔╝██║     ██║   ██║██║   ██║██║  ██║██║██╔████╔██║██║   ██║██║   ██║██╔██╗ ██║██║
+██╔══██╗██║     ██║   ██║██║   ██║██║  ██║██║██║╚██╔╝██║██║   ██║██║   ██║██║╚██╗██║██║
+██████╔╝███████╗╚██████╔╝╚██████╔╝██████╔╝██║██║ ╚═╝ ██║╚██████╔╝╚██████╔╝██║ ╚████║██║
+╚═════╝ ╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝╚═╝     ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝
+"""
+
+    print(RED + "\tCreated by:\n" + banner + RESET)
+
+
+## Colors
+
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+BLUE = "\033[34m"
+RESET = "\033[0m"
+operating_system = platform.system()
 usernames = []
-
 death_messages = [
     "died",
     "drowned",
@@ -37,20 +58,51 @@ death_messages = [
     "was slain by a zombie"
 ]
 
-while True:
-    # Restart the Minecraft server
-    print("\n" * 100)
-    print("Starting minecraft server")
-    # for LINUX SERVER
-    minecraft_process = subprocess.Popen(["/bin/bash", "./run.sh"], stdin=subprocess.PIPE, stdout=subprocess.PIPE,universal_newlines=True)
-    
-    # for Windows Server uncomment this line and make the line above a comment
-    # minecraft_process = subprocess.Popen(["cmd","run.bat"],stdin=subprocess.PIPE, stdout=subprocess.PIPE,universal_newlines=True)
+def enable_hardcore_mode():
+    file_path = "server.properties"
+    temp_file_path = "temp.properties"
+    hardcore_key = "hardcore=false"
+    hardcore_new = "hardcore=true"
 
-    print("Looking for deaths now...")
+    # Open the input file and create a temporary file for writing
+    with open(file_path, "r") as input_file, open(temp_file_path, "w") as temp_file:
+        # Read each line from the input file
+        for line in input_file:
+            # Check if the line contains the hardcore setting
+            if line.strip() == hardcore_key:
+                # Replace the line with the new value
+                line = hardcore_new + "\n"
+            # Write the modified or unchanged line to the temporary file
+            temp_file.write(line)
 
-    # Function to check if a player has died
-    def check_player_death():
+    # Replace the original file with the temporary file
+    os.replace(temp_file_path, file_path)
+    print(GREEN + "[+]\tHardcore has been enabled in the server properties." + RESET)
+
+
+def check_and_create_run_file(operating_system):
+    if operating_system == "Linux":
+        run_file_path = "./run.sh"
+        run_file_content = "java -Xmx2048M -Xms1024M -jar server.jar nogui"
+    elif operating_system == "Windows":
+        run_file_path = "run.bat"
+        run_file_content = "java -Xmx2048M -Xms1024M -jar server.jar nogui"
+    else:
+        print(RED + "[!]\tUnsupported operating system." + RESET)
+        return
+
+    try:
+        with open(run_file_path, "r"):
+            # Run file exists, no need to create
+            return
+    except FileNotFoundError:
+        # Run file does not exist, create it
+        with open(run_file_path, "w") as run_file:
+            run_file.write(run_file_content)
+        print(GREEN + f"[+]\t{run_file_path} created successfully." + RESET)
+
+
+def check_player_death():
         while True:
             line = minecraft_process.stdout.readline()
             out = line.replace("\n", "")
@@ -58,7 +110,7 @@ while True:
             if line.strip():
                 if any(keyword in line for keyword in death_messages):
                     if not any(f"<{username}>" in line for username in usernames):
-                        print("A player died")
+                        print(RED + "[-]\tA player died" + RESET)
                         minecraft_process.stdin.write(f"say {username} died, the server will restart with a new world.\n")
                         minecraft_process.stdin.flush()
                         time.sleep(10)
@@ -67,36 +119,49 @@ while True:
                     username = line.split("[")[2].split(": ")[1]
                     if username not in usernames:
                         usernames.append(username)
-                        print(f"Username: {username} appended to list.")
+                        print(YELLOW + f"[!]\tUsername: {username} appended to list." + RESET)
 
+# Check for the file first:
+print_banner()
+check_and_create_run_file(operating_system)
+enable_hardcore_mode()
 
+while True:
+    # Restart the Minecraft server
+    print(GREEN + "\n\tRESTARTING\n[+]\tStarting minecraft server" + RESET)
+    
+    # Determine the operating system
+    if operating_system == "Linux":
+        minecraft_command = ["/bin/bash", "./run.sh"]
+        delete_command = "rm -rf world/"
+    elif operating_system == "Windows":
+        minecraft_command = ["run.bat"]
+        delete_command = "rmdir /s /q world"
+    else:
+        print(RED + "[!]\tUnsupported operating system." + RESET)
+        sys.exit(1)
 
+    minecraft_process = subprocess.Popen(minecraft_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+    print(BLUE + "[..]\tLooking for deaths now..." + RESET)
 
     # Wait for a player to die
     try:
         check_player_death()
     except KeyboardInterrupt:
-        print("\n\n\nKeyboardInterrupt: Stopping server...")
+        print("\n\n" + YELLOW + "[-]\tKeyboardInterrupt: Stopping server..." + RESET)
         minecraft_process.stdin.write("stop\n")
         minecraft_process.stdin.flush()
         time.sleep(5)
         minecraft_process.wait()
         sys.exit(0)
-        
-
 
     # Wait for the server to shut down
     minecraft_process.stdin.write("stop\n")
     minecraft_process.stdin.flush()
     minecraft_process.wait()
-    print("Server stopped.")
+    print(YELLOW + "[-]\tServer stopped." + RESET)
 
     # Delete the world directory
-    # For Linux Server:
-    os.system("rm -rf world/")
-
-    # For Windows Server:
-    #os.sytem("rmdir /s /q world")
-
-    print("Directory world deleted.")
+    os.system(delete_command)
+    print(RED + "[!]\tDirectory 'world' deleted." + RESET)
     time.sleep(1)
