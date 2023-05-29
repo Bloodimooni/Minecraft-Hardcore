@@ -109,7 +109,7 @@ def check_player_death():
             print(out)
             if line.strip():
                 if any(keyword in line for keyword in death_messages):
-                    if not any(f"<{username}>" in line for username in usernames):
+                    if not any(f"<{username}>" in line for username in usernames) and not any(f"Villager" in line):
                         print(RED + "[-]\tA player died" + RESET)
                         minecraft_process.stdin.write(f"say {username} died, the server will restart with a new world.\n")
                         minecraft_process.stdin.flush()
