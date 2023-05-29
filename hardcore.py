@@ -31,7 +31,8 @@ allowed_death_entities = [
     "Cat",
     "Wolf",
     "Dog",
-    "Horse"
+    "Horse",
+    "Parrot"
 ]
 death_messages = [
     "died",
@@ -176,6 +177,6 @@ while True:
     print(YELLOW + "[-]\tServer stopped." + RESET)
 
     # Delete the world directory
-    #os.system(delete_command)
+    os.system(delete_command)
     print(RED + "[!]\tDirectory 'world' deleted." + RESET)
     time.sleep(1)
