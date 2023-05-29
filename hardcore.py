@@ -13,7 +13,7 @@ def print_banner():
 ██████╔╝███████╗╚██████╔╝╚██████╔╝██████╔╝██║██║ ╚═╝ ██║╚██████╔╝╚██████╔╝██║ ╚████║██║
 ╚═════╝ ╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝╚═╝     ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝
 """
-
+    print("\n"*100)
     print(RED + "\tCreated by:\n" + banner + RESET)
 
 
@@ -26,6 +26,13 @@ BLUE = "\033[34m"
 RESET = "\033[0m"
 operating_system = platform.system()
 usernames = []
+allowed_death_entities = [
+    "Villager",
+    "Cat",
+    "Wolf",
+    "Dog",
+    "Horse"
+]
 death_messages = [
     "died",
     "drowned",
@@ -109,9 +116,16 @@ def check_player_death():
             print(out)
             if line.strip():
                 if any(keyword in line for keyword in death_messages):
-                    if not any(f"<{username}>" in line for username in usernames) and not any(f"Villager" in line):
+                    if not any(f"<{username}>" in line for username in usernames) \
+                        and not any(death_entities in line for death_entities in allowed_death_entities):
+                        for user in usernames:
+                            if line.__contains__(user) == True:
+                                dead_player = user
+                            else:
+                                continue
+
                         print(RED + "[-]\tA player died" + RESET)
-                        minecraft_process.stdin.write(f"say {username} died, the server will restart with a new world.\n")
+                        minecraft_process.stdin.write(f"say {dead_player} died, the server will restart with a new world.\n")
                         minecraft_process.stdin.flush()
                         time.sleep(10)
                         return
@@ -162,6 +176,6 @@ while True:
     print(YELLOW + "[-]\tServer stopped." + RESET)
 
     # Delete the world directory
-    os.system(delete_command)
+    #os.system(delete_command)
     print(RED + "[!]\tDirectory 'world' deleted." + RESET)
     time.sleep(1)
