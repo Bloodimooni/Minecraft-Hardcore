@@ -54,6 +54,7 @@ death_messages = [
     "failed to escape the Nether",
     "fell out of the world",
     "discovered the void",
+    "discovered the floor was lava",
     "was doomed by the Wither",
     "got struck by lightning",
     "got caught in a trap",

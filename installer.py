@@ -48,6 +48,7 @@ def eula_auto_accept():
         eula.write("eula=true")
     
 
+time.sleep(2)
 print_banner()
 print("\n"*5)
 install_jdk(operating_system)
