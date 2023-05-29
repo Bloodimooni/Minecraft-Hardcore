@@ -34,6 +34,7 @@ allowed_death_entities = [
     "Horse",
     "Parrot"
 ]
+
 death_messages = [
     "died",
     "drowned",
@@ -65,6 +66,8 @@ death_messages = [
     "got suffocated in a wall",
     "was slain by a zombie"
 ]
+
+# RIP Manu, he died for testing purposes
 
 def enable_hardcore_mode():
     file_path = "server.properties"
