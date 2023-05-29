@@ -36,4 +36,6 @@ python hardcore.py on windows
 or
 python3 hardocore.py on linux.
 
+If you want to shutdown the Server, just press CTRL + C and the server will shut down and save everything.
+
 Enjoy!
