@@ -92,6 +92,16 @@ def enable_hardcore_mode():
     os.replace(temp_file_path, file_path)
     print(GREEN + "[+]\tHardcore has been enabled in the server properties." + RESET)
 
+def check_eula_agreement():
+    try:
+        with open("eula.txt", "r") as file:
+            for line in file:
+                if line.strip() == "eula=true":
+                    return True
+        return False
+    except FileNotFoundError:
+        return False
+
 
 def check_and_create_run_file(operating_system):
     if operating_system == "Linux":
@@ -112,7 +122,7 @@ def check_and_create_run_file(operating_system):
         # Run file does not exist, create it
         with open(run_file_path, "w") as run_file:
             run_file.write(run_file_content)
-        print(GREEN + f"[+]\t{run_file_path} created successfully." + RESET)
+        print(GREEN + f"[+]\t{run_file_path} created successfully." + RESET)         
 
 
 def check_player_death():
@@ -148,6 +158,14 @@ def check_player_death():
 time.sleep(2)
 print_banner()
 check_and_create_run_file(operating_system)
+
+if check_eula_agreement() == False:
+    try:
+        os.system("rm eula.txt")
+    except:
+        pass
+    with open("eula.txt","w") as eula:
+        eula.write("eula=true") 
 
 try:
     enable_hardcore_mode()
