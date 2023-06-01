@@ -232,7 +232,7 @@ def check_player_death():
                     
                     elif "stats" in line.lower():
                         print(GREEN + "[i]\tuser asked for stats, sending them" + RESET)
-                        minecraft_process.stdin.write(f"say Attempt {attempt_number} with the following deaths: {str(deaths).replace('{','').replace('}','')}\n")
+                        minecraft_process.stdin.write(f"say Attempt {attempt_number}: {str(deaths).replace('{','').replace('}','')}\n")
                         minecraft_process.stdin.flush()
 
                 elif " logged in with entity id" in line:
