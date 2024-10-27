@@ -130,6 +130,9 @@ def check_and_create_run_file(operating_system):
     elif operating_system == "Windows":
         run_file_path = "run.bat"
         run_file_content = "java -Xmx2048M -Xms1024M -jar server.jar nogui"
+    elif operating_system == "Darwin":
+        run_file_path = "./run.sh"
+        run_file_content = "java -Xmx2048M -Xms1024M -jar server.jar nogui"
     else:
         print(RED + "[!]\tUnsupported operating system." + RESET)
         return
@@ -281,6 +284,10 @@ while True:
     elif operating_system == "Windows":
         minecraft_command = ["run.bat"]
         delete_command = "rmdir /s /q world"
+
+    elif operating_system == "Darwin":
+        minecraft_command = ["/bin/bash", "./run.sh"]
+        delete_command = "rm -rf world/"
     
     else:
         print(RED + "[!]\tUnsupported operating system." + RESET)
