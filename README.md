@@ -1,6 +1,7 @@
 # Minecraft-Hardcore challenge automation
 This is a python script, to automate the Challenge that Martincitopants did in his latest video: 
 https://www.youtube.com/watch?v=CYBdxuGj0X4&amp;pp=ygUPbWFydGluY2l0b3BhbnRz
+
 No Developers had to use Java, therefore no one was harmed.
 
 # How to use it?
